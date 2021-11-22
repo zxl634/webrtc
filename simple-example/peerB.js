@@ -1,5 +1,7 @@
 const peerConnection = new RTCPeerConnection();
 
+let dataChannel;
+
 peerConnection.onicecandidate = () =>
   console.log(
     "We have an ICE candidate (SDP): %s",
@@ -12,6 +14,8 @@ peerConnection.ondatachannel = (event) => {
 
   event.channel.onmessage = (event) =>
     console.log("New data from peer: %s", event.data);
+
+  dataChannel = event.channel;
 };
 
 const form = document.getElementById("form");
