@@ -1,13 +1,16 @@
+// 1. Create connection and data channel for peer B
 const peerConnection = new RTCPeerConnection();
-
 let dataChannel;
 
+// Add listener on peer connection to print out SDP (same as peer A)
 peerConnection.onicecandidate = () =>
   console.log(
     "We have an ICE candidate (SDP): %s",
     JSON.stringify(peerConnection.localDescription)
   );
 
+// Add listener when remote peer calls `createDataChannel()`
+// https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/ondatachannel
 peerConnection.ondatachannel = (event) => {
   event.channel.onopen = () =>
     console.log("Data channel is open and ready to be used.");

@@ -1,11 +1,22 @@
+// 1. Create connection and data channel
+
 // Create peer connection
 // https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection
 const peerConnection = new RTCPeerConnection();
 
+// Add listener on peer connection to print out SDP
+// https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/onicecandidate
+peerConnection.onicecandidate = () =>
+  console.log(
+    "We have an ICE candidate (SDP): %s",
+    JSON.stringify(peerConnection.localDescription)
+  );
+
 // Create data channel used to peer-to-peer transfer of arbitrary data
 // https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel
 const dataChannel = peerConnection.createDataChannel("channel");
-// ... and create listener when data is received on the channel
+
+// Create listener when data is received on the channel
 // https://developer.mozilla.org/en-US/docs/Web/API/RTCDataChannel/onmessage
 dataChannel.onmessage = (event) =>
   console.log("New data from peer: %s", event.data);
@@ -13,14 +24,7 @@ dataChannel.onmessage = (event) =>
 // Notify us when data channel connection opens
 dataChannel.onopen = () => console.log("Data channel is open");
 
-// Print out information when we have an icecandidate to send to peer
-peerConnection.onicecandidate = () =>
-  console.log(
-    "We have an ICE candidate (SDP): %s",
-    JSON.stringify(peerConnection.localDescription)
-  );
-
-// Create offer
+// 2. Create offer
 peerConnection
   .createOffer()
   .then((offer) => peerConnection.setLocalDescription(offer))
